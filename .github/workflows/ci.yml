@@ -1,0 +1,36 @@
+name: CI
+on: push
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: Ubuntu-20.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "^1.17"
+      - name: Vet
+        run: go vet
+      - name: Lint
+        uses: golangci/golangci-lint-action@v2
+        with:
+          version: latest
+          skip-go-installation: true
+          skip-pkg-cache: true
+  test:
+    name: Test
+    runs-on: Ubuntu-20.04
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: Setup Go
+        uses: actions/setup-go@v2
+        with:
+          go-version: "^1.17"
+      - name: Install Dependencies
+        run: go mod tidy
+      - name: Test
+        run: go test -race ./...
